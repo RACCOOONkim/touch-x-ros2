@@ -143,8 +143,26 @@ Touch_Setup
 
 ### 데이터 모니터링
 
+#### 빠른 실시간 모니터링 (권장)
+
 ```bash
-./monitor_touchx.sh joint_states
+# Position 값만 빠르게 보기
+./monitor_touchx_fast.sh position
+
+# Velocity만 빠르게 보기
+./monitor_touchx_fast.sh velocity
+
+# 전체 조인트 상태 (필터링됨)
+./monitor_touchx_fast.sh joint_states
+```
+
+#### 상세 모니터링
+
+```bash
+./monitor_touchx.sh joint_states  # 전체 상세 출력
+./monitor_touchx.sh twist         # 속도 정보
+./monitor_touchx.sh tf            # TF 변환
+./monitor_touchx.sh hz            # 토픽 주파수 확인
 ```
 
 ### rqt GUI 사용
