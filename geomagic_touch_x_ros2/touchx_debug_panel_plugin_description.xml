@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<library path="libtouchx_debug_panel">
+  <class name="geomagic_touch_x/TouchXDebugPanel"
+         type="geomagic_touch_x::TouchXDebugPanel"
+         base_class_type="rviz_common::Panel">
+    <description>
+      Touch X Debug Panel - Displays position, velocity, and effort in real-time
+    </description>
+  </class>
+</library>
+

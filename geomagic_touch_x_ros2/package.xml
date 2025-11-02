@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>geomagic_touch_x</name>
+  <version>2.1.0</version>
+  <description>ROS 2 Package for the Geomagic Touch X</description>
+
+  <maintainer email="christopher.mower@kcl.ac.uk">Christopher E. Mower</maintainer>
+  <maintainer email="ross.henry@kcl.ac.uk">Ross Henry</maintainer>
+  <maintainer email="martin.huber@kcl.ac.uk">Martin Huber</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>eigen3_cmake_module</buildtool_depend>
+
+  <depend>eigen</depend>
+  <depend>geometry_msgs</depend>
+  <depend>rclcpp</depend>
+  <depend>rclcpp_components</depend>
+  <depend>sensor_msgs</depend>
+  <depend>tf2</depend>
+  <depend>tf2_ros</depend>
+  <depend>visualization_msgs</depend>
+  <depend>rviz_common</depend>
+  <depend>pluginlib</depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+    <rviz plugin="${prefix}/touchx_debug_panel_plugin_description.xml"/>
+  </export>
+
+</package>
