@@ -7,8 +7,8 @@ USB-connected Geomagic Touch X haptic device를 ROS 2 Foxy와 연동하는 솔�
 ### 1. 자동 설치
 
 ```bash
-git clone <repository-url>
-cd TouchX-Repo
+git clone https://github.com/RACCOOONkim/touch-x-ros2.git
+cd touch-x-ros2
 chmod +x SETUP.sh
 ./SETUP.sh
 ```
