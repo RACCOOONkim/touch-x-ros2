@@ -1,0 +1,70 @@
+# Geomagic Touch X + ROS 2 Foxy Docker 이미지
+# 사용법: docker build -t touchx_ros2:latest -f Dockerfile.touchx_ros2 .
+
+FROM osrf/ros:foxy-desktop
+
+# 기본 패키지 설치
+RUN apt-get update && apt-get install -y \
+    curl \
+    wget \
+    sudo \
+    udev \
+    libncurses5-dev \
+    freeglut3-dev \
+    zlib1g-dev \
+    libqt5widgets5 \
+    libqt5svg5 \
+    libxcb-xinerama0 \
+    libxcb-cursor0 \
+    build-essential \
+    cmake \
+    && rm -rf /var/lib/apt/lists/*
+
+# ROS 사용자 생성 및 sudo 권한 부여
+RUN useradd -m -s /bin/bash ros && \
+    echo "ros ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
+    mkdir -p /home/ros/touchx_ws/src
+
+# OpenHaptics SDK 설치
+WORKDIR /tmp
+RUN mkdir -p tmp && \
+    curl https://s3.amazonaws.com/dl.3dsystems.com/binaries/support/downloads/KB+Files/Open+Haptics/openhaptics_3.4-0-developer-edition-amd64.tar.gz --output tmp/openhaptics_3.4-0-developer-edition-amd64.tar.gz && \
+    cd tmp && tar zxf openhaptics_3.4-0-developer-edition-amd64.tar.gz && \
+    echo 'y' | ./openhaptics_3.4-0-developer-edition-amd64/install && \
+    cd / && rm -rf /tmp/tmp
+
+# Touch X 드라이버 설치
+RUN mkdir -p tmp && \
+    curl -L https://github.com/jhu-lcsr/3ds-touch-openhaptics/raw/main/touch_driver_2022.tar.gz -o tmp/touch_driver_2022.tar.gz && \
+    cd tmp && tar zxf touch_driver_2022.tar.gz && \
+    sudo cp touch_driver_2022/bin/Touch_Setup /usr/bin/ && \
+    sudo cp touch_driver_2022/bin/Touch_Diagnostic /usr/bin/ && \
+    sudo cp touch_driver_2022/lib/libPhantomIOLib42.so /usr/lib/ && \
+    cd / && rm -rf /tmp/tmp
+
+# 환경 변수 설정
+ENV GTDD_HOME=/usr/share/3DSystems
+ENV LD_LIBRARY_PATH=/opt/OpenHaptics/Developer/3.4-0/lib64:$LD_LIBRARY_PATH
+ENV DISPLAY=:0
+
+# 설정 디렉토리 생성
+RUN mkdir -p /usr/share/3DSystems/config && \
+    chmod 777 /usr/share/3DSystems/config
+
+# 워크스페이스 설정
+WORKDIR /home/ros/touchx_ws
+RUN chown -R ros:ros /home/ros
+
+# ROS 2 환경 설정
+RUN echo "source /opt/ros/foxy/setup.bash" >> /home/ros/.bashrc && \
+    echo "export GTDD_HOME=/usr/share/3DSystems" >> /home/ros/.bashrc && \
+    echo "export LD_LIBRARY_PATH=/opt/OpenHaptics/Developer/3.4-0/lib64:\$LD_LIBRARY_PATH" >> /home/ros/.bashrc
+
+USER ros
+
+# rosdep 초기화
+RUN sudo rosdep init || true && \
+    rosdep update || true
+
+CMD ["/bin/bash"]
+
