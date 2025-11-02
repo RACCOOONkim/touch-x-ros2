@@ -1,6 +1,34 @@
 # Geomagic Touch X + ROS 2 Foxy
 
-USB-connected Geomagic Touch X haptic device를 ROS 2 Foxy와 연동하는 솔루션입니다.
+USB-connected Geomagic Touch X haptic device를 ROS 2 Foxy와 연동하고 RViz2로 실시간 시각화하는 완전한 솔루션입니다.
+
+## ✨ 주요 기능
+
+- ✅ **Geomagic Touch X USB 디바이스 지원**
+- ✅ **ROS 2 Foxy 통합** - 실시간 데이터 발행 (200Hz)
+- ✅ **RViz2 3D 시각화** - Touch X 위치 및 방향 실시간 시각화
+- ✅ **Docker 컨테이너 기반** - 환경 독립적 실행
+- ✅ **완전 자동화** - 설치 스크립트로 원클릭 설치
+
+## 🔬 테스트 환경
+
+### 호스트 시스템
+
+- **OS**: Ubuntu 20.04, 22.04
+- **Docker**: 20.10 이상
+- **X11**: X11 forwarding 지원
+
+### 컨테이너 환경
+
+- **Base Image**: `osrf/ros:foxy-desktop` (Ubuntu 20.04)
+- **ROS 2**: Foxy Fitzroy
+- **OpenHaptics SDK**: 3.4-0 Developer Edition
+- **Touch X Driver**: 2022 버전
+
+### 하드웨어
+
+- **Geomagic Touch X**: USB 연결 (USB-A to USB-B)
+- **USB Serial Port**: `/dev/ttyACM0` (자동 인식)
 
 ## 📋 사전 요구사항
 
@@ -81,11 +109,35 @@ Touch_Setup
 ./start_rviz_final.sh
 ```
 
+이 스크립트는 다음을 실행합니다:
+- Touch X 드라이버 시작
+- ROS 2 토픽 발행 시작
+- **RViz2 GUI 자동 실행** - Touch X 위치 실시간 시각화
+
+### RViz2에서 확인할 수 있는 것
+
+- **TF 변환**: `touch_x_base` → `touch_x_ee` 축과 화살표
+- **실시간 위치 업데이트**: Touch X를 움직이면 엔드 이펙터 위치가 실시간으로 업데이트
+- **3D 공간 시각화**: Grid와 축으로 3D 공간에서 위치 확인
+- **디버깅 정보**: Marker로 position, velocity, effort 값 표시 (옵션)
+
 ## 📊 제공되는 ROS 2 토픽
 
-- `/geomagic_touch_x/joint_states` - 6개 조인트의 position, velocity, effort
-- `/geomagic_touch_x/twist` - 엔드 이펙터 선속도 및 각속도
-- `/tf` - `touch_x_base` → `touch_x_ee` 변환
+### 1. `/geomagic_touch_x/joint_states` (sensor_msgs/JointState)
+- **position**: 6개 조인트 각도 (joint_angle_1~3, gimbal_angle_1~3)
+- **velocity**: 조인트 각속도
+- **effort**: 조인트 토크
+- **발행 주기**: 200Hz
+
+### 2. `/geomagic_touch_x/twist` (geometry_msgs/TwistStamped)
+- **linear**: 엔드 이펙터 선속도 (x, y, z, 단위: m/s)
+- **angular**: 엔드 이펙터 각속도 (x, y, z, 단위: rad/s)
+- **발행 주기**: 200Hz
+
+### 3. `/tf` (tf2_msgs/TFMessage)
+- **변환**: `touch_x_base` → `touch_x_ee`
+- **용도**: RViz2에서 시각화
+- **발행 주기**: 200Hz
 
 ## 📝 사용 방법
 
