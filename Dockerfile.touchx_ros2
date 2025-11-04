@@ -28,18 +28,22 @@ RUN useradd -m -s /bin/bash ros && \
 # OpenHaptics SDK 설치
 WORKDIR /tmp
 RUN mkdir -p tmp && \
-    curl https://s3.amazonaws.com/dl.3dsystems.com/binaries/support/downloads/KB+Files/Open+Haptics/openhaptics_3.4-0-developer-edition-amd64.tar.gz --output tmp/openhaptics_3.4-0-developer-edition-amd64.tar.gz && \
+    curl -L --fail --retry 3 --retry-delay 2 \
+      https://s3.amazonaws.com/dl.3dsystems.com/binaries/support/downloads/KB+Files/Open+Haptics/openhaptics_3.4-0-developer-edition-amd64.tar.gz \
+      --output tmp/openhaptics_3.4-0-developer-edition-amd64.tar.gz && \
     cd tmp && tar zxf openhaptics_3.4-0-developer-edition-amd64.tar.gz && \
-    echo 'y' | ./openhaptics_3.4-0-developer-edition-amd64/install && \
+    printf "y\nq\n" | ./openhaptics_3.4-0-developer-edition-amd64/install || true && \
     cd / && rm -rf /tmp/tmp
 
 # Touch X 드라이버 설치
 RUN mkdir -p tmp && \
-    curl -L https://github.com/jhu-lcsr/3ds-touch-openhaptics/raw/main/touch_driver_2022.tar.gz -o tmp/touch_driver_2022.tar.gz && \
-    cd tmp && tar zxf touch_driver_2022.tar.gz && \
-    sudo cp touch_driver_2022/bin/Touch_Setup /usr/bin/ && \
-    sudo cp touch_driver_2022/bin/Touch_Diagnostic /usr/bin/ && \
-    sudo cp touch_driver_2022/lib/libPhantomIOLib42.so /usr/lib/ && \
+    curl -L --fail --retry 3 --retry-delay 2 \
+      https://s3.amazonaws.com/dl.3dsystems.com/binaries/Sensable/Linux/TouchDriver2022_04_04.tgz \
+      -o tmp/TouchDriver2022_04_04.tgz && \
+    cd tmp && tar xf TouchDriver2022_04_04.tgz && \
+    sudo cp TouchDriver2022_04_04/bin/Touch_Setup /usr/bin/ && \
+    sudo cp TouchDriver2022_04_04/bin/Touch_Diagnostic /usr/bin/ && \
+    sudo cp TouchDriver2022_04_04/usr/lib/libPhantomIOLib42.so /usr/lib/ && \
     cd / && rm -rf /tmp/tmp
 
 # 환경 변수 설정

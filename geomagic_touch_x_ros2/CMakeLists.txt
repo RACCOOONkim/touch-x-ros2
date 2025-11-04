@@ -97,6 +97,18 @@ install(TARGETS touchx_debug_publisher
   DESTINATION lib/${PROJECT_NAME}
 )
 
+# Desired pose publisher (1kHz)
+add_executable(desired_pose_publisher
+  src/desired_pose_publisher.cpp
+)
+ament_target_dependencies(desired_pose_publisher
+  rclcpp
+  geometry_msgs
+)
+install(TARGETS desired_pose_publisher
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 # Debug panel plugin
 include_directories(include)
 add_library(touchx_debug_panel SHARED

@@ -19,6 +19,7 @@ def generate_launch_description() -> LaunchDescription:
     )
     ld.add_action(DeclareLaunchArgument(name="rviz", default_value="false"))
     ld.add_action(DeclareLaunchArgument(name="debug", default_value="false"))
+    ld.add_action(DeclareLaunchArgument(name="desired_pub", default_value="false"))
     # nodes
     ld.add_action(
         Node(
@@ -49,6 +50,16 @@ def generate_launch_description() -> LaunchDescription:
                     [FindPackageShare("geomagic_touch_x"), "config/rviz_simple.rviz"]
                 ),
             ],
+        )
+    )
+    ld.add_action(
+        Node(
+            package="geomagic_touch_x",
+            executable="desired_pose_publisher",
+            name="desired_pose_publisher",
+            output="screen",
+            condition=IfCondition(LaunchConfiguration("desired_pub")),
+            parameters=[{"frame_id": LaunchConfiguration("frame_id"), "rate_hz": 1000.0}],
         )
     )
     # Debug publisher node
